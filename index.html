@@ -133,12 +133,16 @@
       linear-gradient(180deg,rgba(255,255,255,.025),transparent 35%,rgba(0,0,0,.12));filter:none;opacity:.7;z-index:-3;pointer-events:none}
     .curtain-panel{position:absolute;top:0;bottom:0;width:51%;z-index:10;background:
       linear-gradient(90deg,rgba(255,255,255,.02),transparent 20%,rgba(0,0,0,.08) 82%,rgba(0,0,0,.18)),
-      linear-gradient(180deg,#2f170f,#3b2117 55%,#24110c);box-shadow:inset 0 0 80px rgba(0,0,0,.18);transition:transform 1.25s cubic-bezier(.77,0,.18,1)}
-    .curtain-panel.left{left:0;border-right:1px solid rgba(198,161,91,.1)}
-    .curtain-panel.right{right:0;transform:scaleX(-1);border-left:1px solid rgba(198,161,91,.1)}
-    .splash.ready .curtain-panel{transform:translateX(-100%)}
-    .splash.ready .curtain-panel.right{transform:scaleX(-1) translateX(-100%)}
+      linear-gradient(180deg,#2f170f,#3b2117 55%,#24110c);box-shadow:inset 0 0 80px rgba(0,0,0,.18);will-change:transform}
+    .curtain-panel.left{left:0;border-right:1px solid rgba(198,161,91,.1);animation:curtainOpenLeft 1.25s .38s cubic-bezier(.77,0,.18,1) forwards}
+    .curtain-panel.right{right:0;border-left:1px solid rgba(198,161,91,.1);animation:curtainOpenRight 1.25s .38s cubic-bezier(.77,0,.18,1) forwards}
+    @keyframes curtainOpenLeft{from{transform:translateX(0)}to{transform:translateX(-101%)}}
+    @keyframes curtainOpenRight{from{transform:translateX(0)}to{transform:translateX(101%)}}
+    .splash.force-open .curtain-panel.left{transform:translateX(-101%);animation:none}
+    .splash.force-open .curtain-panel.right{transform:translateX(101%);animation:none}
     .splash-stage{position:relative;z-index:3;width:min(860px,calc(100% - 30px));min-height:min(760px,88vh);display:grid;place-items:center;text-align:center;padding:46px 24px}
+    .splash-stage{opacity:0;transform:scale(.985);animation:stageEntrance .9s 1.15s ease forwards}
+    @keyframes stageEntrance{to{opacity:1;transform:scale(1)}}
     .splash-inner{position:relative;width:min(620px,100%);display:flex;flex-direction:column;align-items:center}
     .intro-kicker{font-size:11px;text-transform:uppercase;letter-spacing:.28em;color:#dfbf8b;font-weight:800;margin-bottom:16px;opacity:.82}
     .intro-orbit{position:absolute;width:min(530px,78vw);aspect-ratio:1;border-radius:50%;border:1px solid rgba(222,184,125,.2);top:58px;left:50%;transform:translateX(-50%);box-shadow:0 0 70px rgba(198,161,91,.08),inset 0 0 60px rgba(255,255,255,.02);pointer-events:none}
@@ -171,6 +175,8 @@
     .intro-silent{border-radius:999px;padding:14px 20px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.045);color:#f5e9df;font-weight:700;backdrop-filter:blur(6px)}
     .intro-silent:hover{background:rgba(255,255,255,.075)}
     .sound-hint{margin-top:13px;font-size:11px;color:#a99384;letter-spacing:.04em;position:relative;z-index:4;transition:opacity .35s ease}
+    .intro-skip{margin-top:12px;border:0;background:transparent;color:#927d70;font-size:11px;text-decoration:underline;text-underline-offset:3px;padding:6px 10px;position:relative;z-index:4}
+    .intro-skip:hover{color:#d8bea7}
     .splash.playing .sound-hint{opacity:0}
     .intro-progress{position:absolute;left:50%;bottom:28px;width:min(360px,60vw);height:1px;transform:translateX(-50%);background:rgba(255,255,255,.09);overflow:hidden;opacity:0;transition:opacity .4s ease}
     .intro-progress::after{content:"";display:block;width:100%;height:100%;background:linear-gradient(90deg,transparent,#cfa86b,#f2d6a3);transform:translateX(-100%)}
@@ -179,8 +185,7 @@
     @keyframes introProgress{to{transform:translateX(0)}}
     .splash.closing .splash-stage{animation:stageFade .9s ease forwards}
     @keyframes stageFade{to{opacity:0;transform:scale(1.015)}}
-    .splash.closing .curtain-panel.left{transform:translateX(-100%)}
-    .splash.closing .curtain-panel.right{transform:scaleX(-1) translateX(-100%)}
+    .splash.closing .curtain-panel{opacity:0;transition:opacity .45s ease}
     .splash.done{opacity:0;visibility:hidden;pointer-events:none;transition:opacity .6s ease,visibility .6s ease}
     @media(max-width:580px){.splash-stage{min-height:94vh;padding:28px 18px}.intro-kicker{font-size:9px;letter-spacing:.21em;margin-bottom:8px}.intro-orbit{top:34px}.intro-logo-shell{width:min(365px,88vw)}.intro-copy{margin-top:-12px}.intro-copy h2{font-size:26px}.intro-copy p{font-size:10px;letter-spacing:.1em}.intro-actions{flex-direction:column;width:100%;max-width:320px;margin-top:22px}.intro-btn,.intro-silent{width:100%}.intro-progress{bottom:18px}.wisp{height:140px}}
 
@@ -207,7 +212,7 @@
           <button class="intro-btn" id="enterExperience" type="button">Vivir la experiencia</button>
           <button class="intro-silent" id="enterSilent" type="button">Entrar sin sonido</button>
         </div>
-        <div class="sound-hint">Activa el sonido para una entrada más envolvente.</div>
+        <div class="sound-hint">Activa el sonido para una entrada más envolvente.</div><button class="intro-skip" id="skipIntro" type="button" aria-label="Saltar introducción">Saltar intro</button>
       </div>
       <div class="intro-progress" aria-hidden="true"></div>
     </div>
@@ -333,7 +338,7 @@
         <div><h4>Explora</h4><a href="#sabores">Sabor disponible</a><br><a href="#coleccion">Próximos sabores</a><br><a href="#arma">Arma tu caja</a></div>
         <div><h4>Contacto</h4><a href="https://wa.me/524561275919" target="_blank" rel="noopener">WhatsApp 456 127 5919</a><br><p>Horarios y políticas por definir.</p></div>
       </div>
-      <div class="copyright"><span>© <span id="year"></span> Luna de Cacao.</span><span>Prototipo comercial · v0.5</span></div>
+      <div class="copyright"><span>© <span id="year"></span> Luna de Cacao.</span><span>Prototipo comercial · v0.6</span></div>
     </div>
   </footer>
 
@@ -468,7 +473,10 @@ const splashIntro=document.querySelector('#splashIntro');
 const introAudio=document.querySelector('#introAudio');
 const enterExperience=document.querySelector('#enterExperience');
 const enterSilent=document.querySelector('#enterSilent');
+const skipIntro=document.querySelector('#skipIntro');
 let splashTimer=null;
+// Respaldo: aunque falle una animación CSS, nunca dejamos la página bloqueada detrás de la cortina.
+setTimeout(()=>{if(splashIntro&&!splashIntro.classList.contains('done')) splashIntro.classList.add('force-open')},1900);
 function fadeAudio(){
   if(!introAudio || introAudio.paused) return;
   let v=introAudio.volume;
@@ -491,6 +499,7 @@ function startExperience(withSound){
 }
 enterExperience.onclick=()=>startExperience(true);
 enterSilent.onclick=()=>startExperience(false);
+if(skipIntro) skipIntro.onclick=finishSplash;
 document.querySelector('#year').textContent=new Date().getFullYear();renderPackages();renderSlots();renderSummary();renderFuture();
 </script>
 </body>
