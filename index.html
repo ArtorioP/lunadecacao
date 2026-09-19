@@ -54,6 +54,7 @@
     button{cursor:pointer}
     .wrap{width:min(1160px,calc(100% - 32px));margin:auto}
     .topbar{background:var(--choco);color:#fff;padding:8px 0;font-size:13px;text-align:center;letter-spacing:.02em}
+    #backendStatus{font-weight:800;color:#f4d4aa}#backendStatus.ok{color:#bfe7c8}#backendStatus.err{color:#ffceb9}
     header{position:sticky;top:0;z-index:40;background:rgba(247,240,230,.91);backdrop-filter:blur(16px);border-bottom:1px solid rgba(106,73,56,.12)}
     nav{height:76px;display:flex;align-items:center;justify-content:space-between;gap:18px}
     .logo{display:flex;align-items:center;gap:11px;font-weight:700}
@@ -226,7 +227,7 @@
     </div>
     <audio id="introAudio" preload="auto" src="assets/audio/luna-de-cacao-intro.mp3"></audio>
   </div>
-  <div class="topbar">Lanzamiento en Querétaro y Corregidora · Producción artesanal por pedido</div>
+  <div class="topbar">Lanzamiento en Querétaro y Corregidora · Producción artesanal por pedido · <span id="backendStatus">Conectando pedidos…</span></div>
   <header>
     <nav class="wrap">
       <a class="logo brand-logo" href="#inicio" aria-label="Luna de Cacao, inicio">
@@ -346,7 +347,7 @@
         <div><h4>Explora</h4><a href="#sabores">Sabor disponible</a><br><a href="#coleccion">Próximos sabores</a><br><a href="#arma">Arma tu caja</a></div>
         <div><h4>Contacto</h4><a href="https://wa.me/524561275919" target="_blank" rel="noopener">WhatsApp 456 127 5919</a><br><p>Horarios y políticas por definir.</p></div>
       </div>
-      <div class="copyright"><span>© <span id="year"></span> Luna de Cacao.</span><span>Prototipo comercial · v0.8</span></div>
+      <div class="copyright"><span>© <span id="year"></span> Luna de Cacao.</span><span>Aplicación conectada · v0.9</span></div>
     </div>
   </footer>
 
@@ -359,18 +360,19 @@
       <form id="orderForm">
         <div class="form-grid">
           <div class="field"><label>Nombre</label><input name="name" required placeholder="Tu nombre" /></div>
-          <div class="field"><label>WhatsApp</label><input name="phone" required inputmode="tel" placeholder="10 dígitos" /></div>
+          <div class="field"><label>WhatsApp</label><input name="phone" required inputmode="tel" maxlength="10" pattern="[0-9]{10}" placeholder="10 dígitos" /></div>
+          <div class="field"><label>Correo <span style="font-weight:500;color:#8b7568">(opcional)</span></label><input type="email" name="email" placeholder="tu@correo.com" /></div>
           <div class="field"><label>Municipio</label><select name="municipality" required><option value="">Selecciona</option><option>Querétaro</option><option>Corregidora</option></select></div>
           <div class="field"><label>Fecha deseada</label><input type="date" name="deliveryDate" /></div>
           <div class="field full"><label>Dirección / referencia</label><textarea name="address" placeholder="Colonia, calle, número y referencias"></textarea></div>
           <div class="field full"><label>Notas</label><textarea name="notes" placeholder="Indicaciones especiales para tu pedido"></textarea></div>
           <div class="field full"><label>Método de pago</label>
             <div class="pay-choice">
-              <label><input type="radio" name="payment" value="Mercado Pago" checked>Mercado Pago</label>
-              <label><input type="radio" name="payment" value="SPEI">SPEI</label>
-              <label><input type="radio" name="payment" value="Pago a la entrega">A la entrega</label>
+              <label id="payMpLabel"><input type="radio" name="payment" value="Mercado Pago" disabled>Mercado Pago</label>
+              <label id="paySpeiLabel"><input type="radio" name="payment" value="SPEI" disabled>SPEI</label>
+              <label id="payCodLabel"><input type="radio" name="payment" value="Pago a la entrega" checked>A la entrega</label>
             </div>
-            <div class="notice" id="paymentNotice">Mercado Pago está preparado en la arquitectura, pero falta conectar las credenciales de la cuenta.</div>
+            <div class="notice" id="paymentNotice">Pago a la entrega disponible. Mercado Pago y SPEI se activarán desde Google Sheets cuando estén configurados.</div>
           </div>
         </div>
         <div class="checkout-actions"><button class="btn btn-primary" type="submit">Registrar pedido</button><button class="btn btn-whatsapp" type="button" id="sendWhats">Enviar por WhatsApp</button></div>
@@ -382,9 +384,10 @@
 <script>
 const CONFIG = {
   whatsapp: '524561275919',
-  appsScriptUrl: '', // Pega aquí la URL /exec de Google Apps Script cuando se despliegue.
+  appsScriptUrl: 'https://script.google.com/macros/s/AKfycbwFslRzWbSCeL0kC7lpySvgyBsncPAtLRLLBbBXql5UUVwNnbFpReUrUgojIx6jk7RA/exec',
   siteName: 'Luna de Cacao'
 };
+const APP_STATE = { backendLoaded:false, config:null, lastOrder:null };
 const PACKAGES = {
   unit: {label:'1 bomba', count:1, price:50},
   box3: {label:'Caja de 3', count:3, price:120},
@@ -463,20 +466,132 @@ document.querySelectorAll('[data-open-cart]').forEach(x=>x.onclick=openDrawer);c
 document.querySelector('[data-open-whatsapp]').onclick=()=>window.open(whatsUrl(buildBaseMessage()),'_blank');
 document.querySelectorAll('.price-card').forEach(c=>c.onclick=()=>{selectedPackage=c.dataset.pkg;chosen=Array(PACKAGES[selectedPackage].count).fill(activeFlavors()[0].name);renderPackages();renderSlots();renderSummary();document.querySelector('#arma').scrollIntoView()});
 
-orderForm.addEventListener('change',e=>{if(e.target.name==='payment'){const v=e.target.value;paymentNotice.textContent=v==='Mercado Pago'?'Mercado Pago está preparado en la arquitectura, pero falta conectar las credenciales de la cuenta.':v==='SPEI'?'Los datos bancarios SPEI están pendientes de configurar. El pedido puede registrarse mientras se completa esa información.':'La opción queda sujeta a confirmar las condiciones y zonas de entrega.'}});
-function orderPayload(form){const data=Object.fromEntries(new FormData(form));const p=PACKAGES[selectedPackage];return {...data,action:'saveOrder',brand:CONFIG.siteName,presentation:p.label,items:chosen,total:p.price,createdAt:new Date().toISOString(),status:'Nuevo'}}
-function fullMessage(payload){return `Hola, Luna de Cacao.\n\nQuiero hacer este pedido:\n• ${payload.presentation}: ${mxn(payload.total)}\n• Sabores: ${payload.items.join(', ')}\n• Nombre: ${payload.name}\n• Mi WhatsApp: ${payload.phone}\n• Municipio: ${payload.municipality}${payload.deliveryDate?`\n• Fecha deseada: ${payload.deliveryDate}`:''}${payload.address?`\n• Dirección: ${payload.address}`:''}\n• Pago: ${payload.payment}${payload.notes?`\n• Notas: ${payload.notes}`:''}\n\n¿Me confirman disponibilidad y entrega?`}
+orderForm.addEventListener('change',e=>{if(e.target.name==='payment'){const v=e.target.value;paymentNotice.textContent=v==='Mercado Pago'?'Pago a la entrega disponible. Mercado Pago y SPEI se activarán desde Google Sheets cuando estén configurados.':v==='SPEI'?'Los datos bancarios SPEI están pendientes de configurar. El pedido puede registrarse mientras se completa esa información.':'La opción queda sujeta a confirmar las condiciones y zonas de entrega.'}});
+function orderPayload(form){const data=Object.fromEntries(new FormData(form));const p=PACKAGES[selectedPackage];return {...data,action:'saveOrder',brand:CONFIG.siteName,presentationId:selectedPackage,presentation:p.label,items:chosen,total:p.price,createdAt:new Date().toISOString(),status:'Nuevo',source:location.href}}
+function fullMessage(payload){
+  const total=payload.serverTotal ?? payload.total;
+  return `Hola, Luna de Cacao.
+
+Quiero confirmar este pedido:${payload.order_id?`
+• Folio: ${payload.order_id}`:''}
+• ${payload.presentation}: ${mxn(total)}
+• Sabores: ${payload.items.join(', ')}
+• Nombre: ${payload.name}
+• Mi WhatsApp: ${payload.phone}
+• Municipio: ${payload.municipality}${payload.deliveryDate?`
+• Fecha deseada: ${payload.deliveryDate}`:''}${payload.address?`
+• Dirección: ${payload.address}`:''}
+• Pago: ${payload.payment}${payload.notes?`
+• Notas: ${payload.notes}`:''}
+
+¿Me confirman disponibilidad y entrega?`;
+}
 function toastMsg(msg){toast.textContent=msg;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2600)}
 async function saveOrder(payload){
   localStorage.setItem('lunaCacaoLastOrder',JSON.stringify(payload));
-  if(!CONFIG.appsScriptUrl) return {demo:true};
+  if(!CONFIG.appsScriptUrl) throw new Error('Backend no configurado');
   const r=await fetch(CONFIG.appsScriptUrl,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload),redirect:'follow'});
-  if(!r.ok) throw new Error('No fue posible guardar el pedido');
-  return r.json();
+  if(!r.ok) throw new Error('No fue posible contactar el servidor de pedidos');
+  const result=await r.json();
+  if(!result || !result.ok) throw new Error((result&&result.error)||'No se pudo registrar el pedido');
+  return result;
 }
-orderForm.onsubmit=async e=>{e.preventDefault();const payload=orderPayload(e.currentTarget);try{const res=await saveOrder(payload);toastMsg(res.demo?'Pedido guardado en modo prototipo':'Pedido registrado');if(payload.payment==='Mercado Pago'&&CONFIG.appsScriptUrl){const pr=await fetch(CONFIG.appsScriptUrl,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({...payload,action:'createPayment'}),redirect:'follow'});const pj=await pr.json();if(pj.checkout_url){window.location.href=pj.checkout_url;return}}window.open(whatsUrl(fullMessage(payload)),'_blank')}catch(err){toastMsg('No se pudo registrar. Abriremos WhatsApp.');window.open(whatsUrl(fullMessage(payload)),'_blank')}};
+async function createPayment(payload){
+  const r=await fetch(CONFIG.appsScriptUrl,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({...payload,action:'createPayment'}),redirect:'follow'});
+  if(!r.ok) throw new Error('No fue posible iniciar Mercado Pago');
+  const result=await r.json();
+  if(!result || !result.ok) throw new Error((result&&result.error)||'Mercado Pago no está disponible');
+  return result;
+}
+orderForm.onsubmit=async e=>{
+  e.preventDefault();
+  if(!orderForm.reportValidity())return;
+  const submitBtn=e.currentTarget.querySelector('button[type="submit"]');
+  const original=submitBtn.textContent;
+  submitBtn.disabled=true;submitBtn.textContent='Registrando…';
+  const payload=orderPayload(e.currentTarget);
+  try{
+    const res=await saveOrder(payload);
+    payload.order_id=res.order_id;payload.serverTotal=res.total;APP_STATE.lastOrder=res;
+    localStorage.setItem('lunaCacaoLastOrder',JSON.stringify(payload));
+    toastMsg(`Pedido ${res.order_id} registrado`);
+    if(payload.payment==='Mercado Pago'){
+      const pj=await createPayment(payload);
+      if(pj.checkout_url){
+        localStorage.setItem('lunaCacaoPendingOrder',JSON.stringify({order_id:res.order_id,mercado_pago_order_id:pj.mercado_pago_order_id||''}));
+        window.location.href=pj.checkout_url;return;
+      }
+    }
+    closeDrawer();
+    setTimeout(()=>window.open(whatsUrl(fullMessage(payload)),'_blank'),350);
+  }catch(err){
+    console.error(err);
+    toastMsg(err.message||'No se pudo registrar el pedido');
+  }finally{submitBtn.disabled=false;submitBtn.textContent=original}
+};
 sendWhats.onclick=()=>{if(!orderForm.reportValidity())return;const payload=orderPayload(orderForm);window.open(whatsUrl(fullMessage(payload)),'_blank')};
 
+async function loadBackendData(){
+  const status=document.querySelector('#backendStatus');
+  try{
+    const r=await fetch(`${CONFIG.appsScriptUrl}?action=bootstrap&_=${Date.now()}`,{method:'GET',redirect:'follow',cache:'no-store'});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const data=await r.json();
+    if(!data||!data.ok) throw new Error((data&&data.error)||'Respuesta inválida');
+    APP_STATE.backendLoaded=true;APP_STATE.config=data.config||{};
+    if(APP_STATE.config.whatsapp) CONFIG.whatsapp=APP_STATE.config.whatsapp;
+
+    (data.presentations||[]).forEach(p=>{
+      if(!p.id)return;
+      PACKAGES[p.id]={label:p.name,count:Number(p.pieces),price:Number(p.price),combinable:!!p.combinable};
+    });
+
+    const byId=Object.fromEntries(FLAVORS.map(f=>[f.id||'',f]));
+    const byName=Object.fromEntries(FLAVORS.map(f=>[f.name,f]));
+    (data.catalog||[]).forEach(f=>{
+      let local=byId[f.id]||byName[f.name];
+      if(!local){local={id:f.id,name:f.name};FLAVORS.push(local)}
+      local.id=f.id||local.id;local.name=f.name||local.name;local.sourceRecipe=f.recipe||local.sourceRecipe;
+      local.status=f.available?'active':'future';local.note=f.description||local.note;local.extraPrice=Number(f.extraPrice||0);
+      if(f.image)local.image=f.image;
+    });
+
+    const muni=orderForm.querySelector('select[name="municipality"]');
+    if(muni&&Array.isArray(APP_STATE.config.municipalities)&&APP_STATE.config.municipalities.length){
+      muni.innerHTML='<option value="">Selecciona</option>'+APP_STATE.config.municipalities.map(m=>`<option>${m}</option>`).join('');
+    }
+    const mp=orderForm.querySelector('input[value="Mercado Pago"]');
+    const spei=orderForm.querySelector('input[value="SPEI"]');
+    const cod=orderForm.querySelector('input[value="Pago a la entrega"]');
+    if(mp)mp.disabled=!APP_STATE.config.mercadoPagoEnabled;
+    if(spei)spei.disabled=!APP_STATE.config.speiEnabled;
+    if(cod)cod.disabled=APP_STATE.config.cashOnDelivery===false;
+    const checked=orderForm.querySelector('input[name="payment"]:checked');
+    if(!checked||checked.disabled){if(cod&&!cod.disabled)cod.checked=true;else if(mp&&!mp.disabled)mp.checked=true;else if(spei&&!spei.disabled)spei.checked=true}
+
+    const act=activeFlavors();
+    if(act.length && !act.some(f=>chosen.includes(f.name))) chosen=Array(PACKAGES[selectedPackage].count).fill(act[0].name);
+    renderPackages();renderSlots();renderSummary();renderFuture();updatePaymentNotice();
+    if(status){status.textContent='Pedidos conectados';status.className='ok'}
+  }catch(err){
+    console.warn('Backend Luna de Cacao no disponible; se conserva catálogo local.',err);
+    if(status){status.textContent='Catálogo local';status.className='err'}
+    APP_STATE.backendLoaded=false;updatePaymentNotice();
+  }
+}
+async function syncReturnedPayment(){
+  if(!CONFIG.appsScriptUrl)return;
+  const qs=new URLSearchParams(location.search);
+  const returned=['status','payment_id','collection_status','merchant_order_id','external_reference'].some(k=>qs.has(k));
+  if(!returned)return;
+  let pending=null;try{pending=JSON.parse(localStorage.getItem('lunaCacaoPendingOrder')||'null')}catch(e){}
+  if(!pending||!pending.order_id)return;
+  try{
+    const r=await fetch(CONFIG.appsScriptUrl,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'syncPayment',order_id:pending.order_id}),redirect:'follow'});
+    const result=await r.json();
+    if(result&&result.payment_status==='Pagado'){localStorage.removeItem('lunaCacaoPendingOrder');toastMsg(`Pago confirmado · ${pending.order_id}`)}
+  }catch(e){console.warn('No se pudo sincronizar el pago',e)}
+}
 const splashIntro=document.querySelector('#splashIntro');
 const introAudio=document.querySelector('#introAudio');
 const enterExperience=document.querySelector('#enterExperience');
@@ -508,7 +623,7 @@ function startExperience(withSound){
 enterExperience.onclick=()=>startExperience(true);
 enterSilent.onclick=()=>startExperience(false);
 if(skipIntro) skipIntro.onclick=finishSplash;
-document.querySelector('#year').textContent=new Date().getFullYear();renderPackages();renderSlots();renderSummary();renderFuture();
+document.querySelector('#year').textContent=new Date().getFullYear();renderPackages();renderSlots();renderSummary();renderFuture();updatePaymentNotice();loadBackendData().then(syncReturnedPayment);
 </script>
 </body>
 </html>

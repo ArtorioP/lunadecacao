@@ -73,3 +73,8 @@ Antes de producción hay que completar y probar:
 - Crear fotografías originales de los 25 sabores.
 - Definir aviso de privacidad, términos de compra, cambios/cancelaciones y alérgenos.
 - Sustituir el logotipo tipográfico provisional si se diseña un logo definitivo.
+
+
+## Backend conectado v0.9
+Web App de Apps Script: `https://script.google.com/macros/s/AKfycbwFslRzWbSCeL0kC7lpySvgyBsncPAtLRLLBbBXql5UUVwNnbFpReUrUgojIx6jk7RA/exec`
+El frontend usa `bootstrap`, `saveOrder`, `createPayment` y `syncPayment`.

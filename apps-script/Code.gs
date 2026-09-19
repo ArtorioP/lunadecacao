@@ -1,118 +1,177 @@
 /**
- * Luna de Cacao — backend inicial para Google Sheets + Mercado Pago.
- * Vincula este script a la hoja de cálculo que recibirá pedidos.
- *
- * Script Properties requeridas para Mercado Pago:
- *   MP_ACCESS_TOKEN = token privado de producción/prueba
- *   SITE_URL = URL pública de GitHub Pages (https://...)
- *
- * IMPORTANTE: nunca coloques MP_ACCESS_TOKEN en index.html ni en GitHub.
+ * API Web App - Luna de Cacao
+ * Compatible con el frontend de GitHub Pages.
  */
 
-const ORDER_HEADERS = [
-  'Fecha','Folio','Estatus','Nombre','WhatsApp','Municipio','Fecha deseada',
-  'Dirección','Presentación','Sabores','Total','Método de pago','Notas','MP Order ID'
-];
-
-function setupLunaDeCacao(){
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  let pedidos = ss.getSheetByName('Pedidos');
-  if (!pedidos) pedidos = ss.insertSheet('Pedidos');
-  if (pedidos.getLastRow() === 0) pedidos.appendRow(ORDER_HEADERS);
-
-  let catalogo = ss.getSheetByName('Catalogo');
-  if (!catalogo) catalogo = ss.insertSheet('Catalogo');
-  if (catalogo.getLastRow() === 0) {
-    catalogo.appendRow(['Receta','Sabor','Estado']);
-    const rows = [
-      [1,'Cappuccino Tradicional','Próximamente'],
-      [2,'Chocolate Intenso con Marshmallow','Próximamente'],
-      [3,'Cappuccino de Chocolate Cremoso','Próximamente'],
-      [4,'Fresa con Chocolate','Próximamente'],
-      [5,'Capuchino Cremoso','Disponible'],
-      [6,'Dulce de Leche','Próximamente'],
-      [7,'Dulce de Maní (tipo Paçoca Brasileña)','Próximamente'],
-      [8,'Coco Cremoso','Próximamente'],[9,'Canela y Vainilla','Próximamente'],
-      [10,'Avellana con Chocolate','Próximamente'],[11,'Churros','Próximamente'],
-      [12,'Caramelo Salado','Próximamente'],[13,'Galletas con Crema','Próximamente'],
-      [14,'Mocha Cremoso','Próximamente'],[15,'Brigadeiro Brasileño','Próximamente'],
-      [16,'Chocolate Blanco y Vainilla','Próximamente'],[17,'Coco con Chocolate','Próximamente'],
-      [18,'Maní Crocante','Próximamente'],[19,'Café con Caramelo','Próximamente'],
-      [20,'Fresa con Leche en Polvo','Próximamente'],[21,'Cacao Extra','Próximamente'],
-      [22,'Cardamomo y Canela','Próximamente'],[23,'Especias de Invierno','Próximamente'],
-      [24,'Caramelo con Canela','Próximamente'],[25,'Trufa de Chocolate','Próximamente']
-    ];
-    catalogo.getRange(2,1,rows.length,3).setValues(rows);
-  }
-  pedidos.setFrozenRows(1); catalogo.setFrozenRows(1);
-  pedidos.autoResizeColumns(1,ORDER_HEADERS.length); catalogo.autoResizeColumns(1,3);
-}
-
-function doGet(){
-  return json_({ok:true,service:'Luna de Cacao API'});
-}
-
-function doPost(e){
-  try{
-    const data = JSON.parse(e.postData.contents || '{}');
-    if (data.action === 'saveOrder') return json_(saveOrder_(data));
-    if (data.action === 'createPayment') return json_(createPayment_(data));
-    return json_({ok:false,error:'Acción no reconocida'});
-  }catch(err){
-    return json_({ok:false,error:String(err.message || err)});
+function doGet(e) {
+  try {
+    const action = String((e && e.parameter && e.parameter.action) || 'health');
+    if (action === 'health') {
+      return json_({ok:true, service:'Luna de Cacao', version:LDC.VERSION, time:new Date().toISOString()});
+    }
+    if (action === 'bootstrap') {
+      return json_({
+        ok: true,
+        config: publicConfig_(),
+        catalog: getPublicCatalog_(),
+        presentations: getPublicPresentations_()
+      });
+    }
+    if (action === 'catalog') return json_({ok:true, catalog:getPublicCatalog_()});
+    if (action === 'presentations') return json_({ok:true, presentations:getPublicPresentations_()});
+    return json_({ok:false, error:'Acción GET no reconocida'});
+  } catch (err) {
+    logEvent_('API_ERROR', '', 'doGet', 'ERROR', err.message, {stack:err.stack});
+    return json_({ok:false, error:err.message});
   }
 }
 
-function saveOrder_(d){
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  let sh = ss.getSheetByName('Pedidos');
-  if (!sh){ setupLunaDeCacao(); sh = ss.getSheetByName('Pedidos'); }
-  const folio = 'LDC-' + Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyyMMdd-HHmmss');
-  sh.appendRow([
-    new Date(), folio, d.status || 'Nuevo', d.name || '', d.phone || '', d.municipality || '',
-    d.deliveryDate || '', d.address || '', d.presentation || '', (d.items || []).join(' | '),
-    Number(d.total || 0), d.payment || '', d.notes || '', ''
-  ]);
-  return {ok:true,folio:folio};
+function doPost(e) {
+  const data = parseBody_(e);
+  try {
+    const action = String(data.action || '').trim();
+    if (action === 'saveOrder') return json_(saveOrder_(data));
+    if (action === 'createPayment') return json_(createMercadoPagoOrder_(data));
+    if (action === 'syncPayment') return json_(syncPayment_(data));
+
+    // Las notificaciones de Mercado Pago se registran, pero la validación de firma
+    // requiere cabeceras HTTP y Apps Script Web Apps no las exponen en doPost(e).
+    if (data.type === 'order' || String(data.action || '').indexOf('order.') === 0) {
+      logEvent_('MP_WEBHOOK_UNVERIFIED', data.data && data.data.external_reference || '', 'Mercado Pago', 'RECIBIDO', 'Webhook registrado sin procesar automáticamente por limitación de validación de firma en Apps Script.', data);
+      return json_({ok:true, received:true});
+    }
+
+    return json_({ok:false, error:'Acción POST no reconocida'});
+  } catch (err) {
+    logEvent_('API_ERROR', data.order_id || data.pedido_id || '', 'doPost', 'ERROR', err.message, data);
+    return json_({ok:false, error:err.message});
+  }
 }
 
-function createPayment_(d){
-  const props = PropertiesService.getScriptProperties();
-  const token = props.getProperty('MP_ACCESS_TOKEN');
-  const siteUrl = props.getProperty('SITE_URL');
-  if (!token) throw new Error('Falta MP_ACCESS_TOKEN en Script Properties.');
-
-  const externalRef = 'LDC-' + Utilities.getUuid().replace(/-/g,'').slice(0,20);
-  const body = {
-    type: 'online',
-    processing_mode: 'manual',
-    total_amount: Number(d.total || 0).toFixed(2),
-    external_reference: externalRef,
-    payer: { email: d.email || undefined },
-    items: [{
-      title: 'Luna de Cacao - ' + (d.presentation || 'Pedido'),
-      quantity: 1,
-      unit_price: Number(d.total || 0).toFixed(2)
-    }]
-  };
-  if (siteUrl) body.config = { online: { success_url: siteUrl, failure_url: siteUrl, pending_url: siteUrl } };
-
-  const resp = UrlFetchApp.fetch('https://api.mercadopago.com/v1/orders', {
-    method: 'post',
-    contentType: 'application/json',
-    headers: {
-      Authorization: 'Bearer ' + token,
-      'X-Idempotency-Key': Utilities.getUuid()
-    },
-    payload: JSON.stringify(body),
-    muteHttpExceptions: true
-  });
-  const code = resp.getResponseCode();
-  const result = JSON.parse(resp.getContentText() || '{}');
-  if (code < 200 || code >= 300) throw new Error('Mercado Pago ' + code + ': ' + resp.getContentText());
-  return {ok:true,order_id:result.id,checkout_url:result.checkout_url,external_reference:externalRef};
+function getPublicCatalog_() {
+  return rowsToObjects_(LDC.SHEETS.CATALOG)
+    .filter(r => String(r.Estado) !== 'Oculto')
+    .sort((a,b) => num_(a.Orden) - num_(b.Orden))
+    .map(r => ({
+      id: String(r.ID_Sabor || ''),
+      name: String(r.Nombre || ''),
+      recipe: num_(r.Receta_PDF),
+      status: String(r.Estado || ''),
+      available: bool_(r.Disponible_Web) && bool_(r.Activo),
+      order: num_(r.Orden),
+      description: String(r.Descripcion_Corta || ''),
+      image: String(r.Imagen || ''),
+      extraPrice: num_(r.Precio_Extra),
+      allergens: String(r.Alergenos_Notas || '')
+    }));
 }
 
-function json_(obj){
-  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+function getPublicPresentations_() {
+  return rowsToObjects_(LDC.SHEETS.PRESENTATIONS)
+    .filter(r => bool_(r.Activa))
+    .sort((a,b) => num_(a.Orden) - num_(b.Orden))
+    .map(r => ({
+      id: String(r.ID || ''),
+      name: String(r.Nombre || ''),
+      pieces: num_(r.Piezas),
+      price: num_(r.Precio),
+      combinable: bool_(r.Permite_Combinacion),
+      description: String(r.Descripcion || '')
+    }));
+}
+
+function saveOrder_(data) {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    const customerName = String(data.name || '').trim();
+    const phone = normalizePhone_(data.phone);
+    const municipality = String(data.municipality || '').trim();
+    const paymentMethod = String(data.payment || '').trim();
+    const items = Array.isArray(data.items) ? data.items.map(String) : [];
+
+    if (!customerName) throw new Error('Falta el nombre del cliente.');
+    if (phone.length !== 10) throw new Error('El WhatsApp debe contener 10 dígitos.');
+    if (!municipality) throw new Error('Selecciona municipio.');
+    if (!paymentMethod) throw new Error('Selecciona método de pago.');
+    if (!items.length) throw new Error('El pedido no contiene sabores.');
+
+    const cfg = getConfig_();
+    const allowedMunicipalities = String(cfg.LAUNCH_MUNICIPALITIES || '').split('|').map(s=>s.trim()).filter(Boolean);
+    if (allowedMunicipalities.length && allowedMunicipalities.indexOf(municipality) < 0) throw new Error('Municipio fuera de la zona de entrega actual.');
+
+    const presentations = rowsToObjects_(LDC.SHEETS.PRESENTATIONS).filter(r => bool_(r.Activa));
+    const presentation = presentations.find(r => String(r.ID) === String(data.presentationId || '') || String(r.Nombre) === String(data.presentation || ''));
+    if (!presentation) throw new Error('Presentación no disponible.');
+
+    const pieces = num_(presentation.Piezas);
+    if (items.length !== pieces) throw new Error(`La presentación ${presentation.Nombre} requiere ${pieces} pieza(s).`);
+
+    const catalog = rowsToObjects_(LDC.SHEETS.CATALOG);
+    const byName = {};
+    catalog.forEach(r => byName[String(r.Nombre)] = r);
+    let extras = 0;
+    const details = items.map((name, idx) => {
+      const f = byName[name];
+      if (!f || !bool_(f.Activo) || !bool_(f.Disponible_Web)) throw new Error(`El sabor "${name}" no está disponible para pedido.`);
+      const extra = num_(f.Precio_Extra);
+      extras += extra;
+      return {line:idx+1, id:String(f.ID_Sabor), name:String(f.Nombre), extra:extra};
+    });
+
+    const subtotal = num_(presentation.Precio) + extras;
+    const shipping = num_(cfg.DELIVERY_FEE_DEFAULT);
+    const discount = 0;
+    const total = subtotal + shipping - discount;
+    const orderId = id_(String(cfg.ORDER_PREFIX || 'LDC'));
+    const customer = upsertCustomer_({name:customerName, phone:phone, email:String(data.email||''), municipality:municipality, address:String(data.address||''), orderTotal:total});
+    const paymentState = paymentMethod === 'Pago a la entrega' ? 'Contra entrega' : 'Pendiente';
+    const now = now_();
+
+    getSheet_(LDC.SHEETS.ORDERS).appendRow([
+      orderId, now, 'Nuevo', customer.id, customerName, phone, String(data.email||''), municipality,
+      String(data.address||''), String(data.reference||''), data.deliveryDate || '', String(data.deliveryWindow||''),
+      String(presentation.ID), String(presentation.Nombre), pieces, subtotal, shipping, discount, total,
+      paymentMethod, paymentState, '', String(data.notes||''), String(data.source||'Web GitHub Pages'), now
+    ]);
+
+    const detailSheet = getSheet_(LDC.SHEETS.ORDER_ITEMS);
+    details.forEach(d => detailSheet.appendRow([orderId,d.line,d.id,d.name,1,d.extra,d.extra,'']));
+
+    getSheet_(LDC.SHEETS.PAYMENTS).appendRow([
+      id_('PAG'), orderId, now, paymentMethod, paymentState, total, '', '', '', '', ''
+    ]);
+
+    if (data.address || data.deliveryDate) {
+      getSheet_(LDC.SHEETS.DELIVERIES).appendRow([
+        id_('ENT'), orderId, data.deliveryDate || '', '', '', municipality, String(data.address||''), shipping, 'Pendiente', '', String(data.notes||'')
+      ]);
+    }
+
+    logEvent_('ORDER_CREATED', orderId, 'Web', 'OK', `${presentation.Nombre} · ${items.join(', ')}`, {total:total, payment:paymentMethod});
+    return {ok:true, order_id:orderId, total:total, payment_status:paymentState, message:'Pedido registrado'};
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function upsertCustomer_(input) {
+  const sh = getSheet_(LDC.SHEETS.CUSTOMERS);
+  const rows = rowsToObjects_(LDC.SHEETS.CUSTOMERS);
+  const existing = rows.find(r => normalizePhone_(r.WhatsApp) === input.phone);
+  const now = now_();
+  if (existing) {
+    const map = headerMap_(LDC.SHEETS.CUSTOMERS);
+    sh.getRange(existing._row, map.Nombre).setValue(input.name);
+    sh.getRange(existing._row, map.Email).setValue(input.email || existing.Email || '');
+    sh.getRange(existing._row, map.Municipio).setValue(input.municipality);
+    sh.getRange(existing._row, map.Direccion_Ultima).setValue(input.address || existing.Direccion_Ultima || '');
+    sh.getRange(existing._row, map.Fecha_Ultimo_Pedido).setValue(now);
+    sh.getRange(existing._row, map.Num_Pedidos).setValue(num_(existing.Num_Pedidos) + 1);
+    sh.getRange(existing._row, map.Total_Compras).setValue(num_(existing.Total_Compras) + input.orderTotal);
+    return {id:String(existing.Cliente_ID), row:existing._row};
+  }
+  const customerId = id_('CLI');
+  sh.appendRow([customerId,input.name,input.phone,input.email,input.municipality,input.address,now,now,1,input.orderTotal,'']);
+  return {id:customerId, row:sh.getLastRow()};
 }
