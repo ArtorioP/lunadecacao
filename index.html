@@ -347,7 +347,7 @@
         <div><h4>Explora</h4><a href="#sabores">Sabor disponible</a><br><a href="#coleccion">Próximos sabores</a><br><a href="#arma">Arma tu caja</a></div>
         <div><h4>Contacto</h4><a href="https://wa.me/524561275919" target="_blank" rel="noopener">WhatsApp 456 127 5919</a><br><p>Horarios y políticas por definir.</p></div>
       </div>
-      <div class="copyright"><span>© <span id="year"></span> Luna de Cacao.</span><span>Aplicación conectada · v0.9</span></div>
+      <div class="copyright"><span>© <span id="year"></span> Luna de Cacao.</span><span>Aplicación conectada · v0.9.3</span></div>
     </div>
   </footer>
 
@@ -446,9 +446,14 @@ function renderSummary(){
 function buildBaseMessage(){const p=PACKAGES[selectedPackage];return `Hola, Luna de Cacao. Quiero pedir ${p.label} (${mxn(p.price)}): ${chosen.join(', ')}.`}
 function whatsUrl(msg){return `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(msg)}`}
 function renderFuture(){
-  const future=FLAVORS.filter(f=>f.status!=='active');
+  const future=FLAVORS.filter(f=>f.status!=='active')
+    .sort((a,b)=>{
+      const ai=a.image?0:1, bi=b.image?0:1;
+      if(ai!==bi) return ai-bi;
+      return (a.sourceRecipe||999)-(b.sourceRecipe||999);
+    });
   futureGrid.innerHTML=future.map((f,i)=>`<article class="future ${f.image?'is-illustrated':'no-image'} ${i>=8?'hidden':''}">
-    <div class="future-thumb">${f.image?`<img src="${f.image}" alt="${f.name}" />`:''}<span class="future-badge">${f.image?'Imagen lista':'Próximamente'}</span></div>
+    <div class="future-thumb">${f.image?`<img src="${f.image}" alt="${f.name}" />`:''}${!f.image?`<span class="future-badge">Próximamente</span>`:''}</div>
     <div class="future-body">
       <span class="num">RECETA ${String(f.sourceRecipe).padStart(2,'0')}</span>
       <h3>${f.name}</h3>
