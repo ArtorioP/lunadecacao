@@ -122,6 +122,7 @@
     .drawer-backdrop{position:fixed;inset:0;background:rgba(28,14,9,.58);z-index:79;opacity:0;pointer-events:none;transition:.25s}.drawer-backdrop.open{opacity:1;pointer-events:auto}.drawer{position:fixed;right:0;top:0;bottom:0;width:min(560px,100%);background:#fffaf4;z-index:80;transform:translateX(105%);transition:.28s ease;overflow:auto;box-shadow:-30px 0 60px rgba(0,0,0,.2)}.drawer.open{transform:none}.drawer-head{position:sticky;top:0;background:rgba(255,250,244,.96);backdrop-filter:blur(12px);padding:22px 24px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;z-index:2}.drawer-head h3{margin:0;font-size:28px;color:var(--choco)}.x{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:22px}.drawer-body{padding:24px}.checkout-summary{background:#f1e4d5;border-radius:18px;padding:18px;margin-bottom:22px}.checkout-summary b{color:var(--choco)}
     .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.field{display:grid;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:12px;font-weight:800;color:var(--brown);text-transform:uppercase;letter-spacing:.06em}.field input,.field select,.field textarea{width:100%;padding:13px 14px;border:1px solid #ddcdbd;border-radius:13px;background:white;outline:0}.field textarea{min-height:82px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--caramel);box-shadow:0 0 0 3px rgba(197,107,74,.1)}
     .pay-choice{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:7px}.pay-choice label{border:1px solid var(--line);border-radius:14px;padding:13px 8px;text-align:center;font-size:12px;font-weight:800;background:#fff;cursor:pointer}.pay-choice input{display:none}.pay-choice label:has(input:checked){border-color:var(--caramel);background:#fff1e7;color:#a84f35}.notice{background:#fff3d8;color:#785b21;border:1px solid #f0d594;padding:11px 13px;border-radius:12px;font-size:12px;margin-top:12px}.success{background:#e9f4eb;color:#3e6645;border-color:#b9d9bf}.checkout-actions{display:grid;gap:10px;margin-top:20px}.checkout-actions .btn{width:100%}.spei-details{display:none;margin-top:12px;padding:16px;border:1px solid #e5cda9;border-radius:16px;background:linear-gradient(180deg,#fffaf1,#f6ecdf);color:#533628}.spei-details.show{display:block}.spei-details h4{margin:0 0 10px;font:700 20px Georgia,serif;color:var(--choco)}.spei-grid{display:grid;grid-template-columns:1fr;gap:8px;font-size:13px}.spei-row{display:flex;justify-content:space-between;gap:14px;align-items:center;padding:9px 0;border-bottom:1px dashed #ddc8ae}.spei-row:last-child{border-bottom:0}.spei-row span{color:#846b5d}.spei-row b{color:var(--choco);text-align:right;word-break:break-all}.copy-spei{border:0;border-radius:999px;padding:9px 13px;background:var(--choco);color:#fff;font-weight:800;font-size:12px}.spei-help{margin:11px 0 0;font-size:12px;color:#745e50;line-height:1.45}.spei-confirm{margin-top:12px;padding:12px 14px;border-radius:14px;background:#edf6ef;color:#355d3d;border:1px solid #bdd8c2;font-size:12px;line-height:1.45}
+    .spei-after{display:none;margin-top:14px;padding:18px;border-radius:18px;background:#fff;border:1px solid #e2cfb9;box-shadow:0 12px 28px rgba(58,33,24,.07)}.spei-after.show{display:block}.spei-after .state{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border-radius:999px;background:#fff3d8;color:#785b21;border:1px solid #f0d594;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.07em}.spei-after h4{margin:13px 0 8px;font:700 24px Georgia,serif;color:var(--choco)}.spei-after p{margin:0;color:#765f52;font-size:13px;line-height:1.5}.spei-summary{display:grid;gap:7px;margin:15px 0}.spei-summary div{display:flex;justify-content:space-between;gap:15px;padding:9px 0;border-bottom:1px dashed #ead9c7;font-size:13px}.spei-summary span{color:#8b7568}.spei-summary b{text-align:right;color:var(--choco);word-break:break-word}.spei-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}.spei-actions .wide{grid-column:1/-1}.btn-spei-report{background:#226f54;color:#fff;border:0}.btn-spei-copy{background:#fff7ee;color:var(--choco);border:1px solid #dfc9b2}.spei-reported{display:none;margin-top:12px;padding:12px 14px;border-radius:13px;background:#eaf5ed;color:#355d3d;border:1px solid #bdd8c2;font-size:12px}.spei-reported.show{display:block}@media(max-width:580px){.spei-actions{grid-template-columns:1fr}.spei-actions .wide{grid-column:auto}}
     .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#1f120d;color:#fff;padding:12px 18px;border-radius:999px;z-index:99;transition:.25s;font-size:13px}.toast.show{opacity:1;transform:translate(-50%,0)}
     @media(max-width:900px){.navlinks a:not(.btn){display:none}.hero-grid,.product-card,.builder-grid,.coverage-grid{grid-template-columns:1fr}.hero-art{min-height:440px}.product-visual{min-height:390px}.future-grid{grid-template-columns:repeat(2,1fr)}.steps,.payments{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr 1fr}.prices,.option-grid{grid-template-columns:repeat(2,1fr)}.summary-card{position:relative;top:auto}}
     @media(max-width:580px){.wrap{width:min(100% - 22px,1160px)}nav{height:66px}.brand{font-size:20px}.logo-mark{width:39px;height:39px}.brand-logo img{height:50px}.navlinks .btn{padding:10px 13px;font-size:12px}.hero{padding-top:32px}.hero-grid{gap:25px}.hero-art{min-height:350px}.hero-card{width:100%;max-width:390px}.section-head{align-items:start;flex-direction:column}.product-info{padding:26px 20px}.product-info h3{font-size:34px}.product-visual{min-height:330px}.future-grid{grid-template-columns:1fr 1fr}.future{min-height:135px;padding:15px}.future h3{font-size:16px}.builder-panel,.summary-card{padding:20px}.coverage-card h2{font-size:35px}.footer-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.field.full{grid-column:1}.pay-choice{grid-template-columns:1fr}.drawer-body{padding:18px}.splash-card{padding:28px 18px 30px}.splash-title{font-size:29px}.splash-text{font-size:14px}.splash-logo{max-width:92%}.steam-stage{height:140px}.steam-cup{width:132px;height:62px}.steam-cup::before{width:46px;height:32px;right:-43px;top:12px}.splash-actions{flex-direction:column}.splash-btn,.splash-link{width:100%}}
@@ -383,6 +384,23 @@
               </div>
               <p class="spei-help">Al registrar tu pedido te daremos una referencia única. Transfiere el total exacto y conserva tu comprobante. El pedido permanecerá pendiente hasta validar el abono.</p>
               <div class="spei-confirm" id="speiConfirm" style="display:none"></div>
+              <div class="spei-after" id="speiAfter">
+                <span class="state">Pago pendiente de validación</span>
+                <h4>Completa tu transferencia</h4>
+                <p>Transfiere el total exacto. Usa la referencia indicada y después avísanos por WhatsApp para validar tu comprobante.</p>
+                <div class="spei-summary">
+                  <div><span>Pedido</span><b id="afterOrderId">—</b></div>
+                  <div><span>Total</span><b id="afterTotal">—</b></div>
+                  <div><span>Referencia</span><b id="afterReference">—</b></div>
+                  <div><span>Concepto</span><b id="afterConcept">—</b></div>
+                </div>
+                <div class="spei-actions">
+                  <button type="button" class="btn btn-spei-copy" id="copyAfterClabe">Copiar CLABE</button>
+                  <button type="button" class="btn btn-spei-copy" id="copyAfterReference">Copiar referencia</button>
+                  <button type="button" class="btn btn-spei-report wide" id="reportSpeiTransfer">Ya realicé mi transferencia</button>
+                </div>
+                <div class="spei-reported" id="speiReported">Transferencia reportada. Se abrirá WhatsApp para que adjuntes tu comprobante. El pedido seguirá como <b>Pendiente</b> hasta validar el abono.</div>
+              </div>
             </div>
           </div>
         </div>
@@ -542,6 +560,28 @@ async function createPayment(payload){
   if(!result || !result.ok) throw new Error((result&&result.error)||'Mercado Pago no está disponible');
   return result;
 }
+async function reportSpeiTransfer(orderId){
+  const r=await fetch(CONFIG.appsScriptUrl,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({action:'reportSpeiTransfer',order_id:orderId}),redirect:'follow'});
+  if(!r.ok) throw new Error('No fue posible reportar la transferencia');
+  const result=await r.json();
+  if(!result||!result.ok) throw new Error((result&&result.error)||'No se pudo reportar la transferencia');
+  return result;
+}
+function speiReceiptMessage(payload){
+  const total=payload.serverTotal ?? payload.total;
+  return `Hola, Luna de Cacao.\n\nYa realicé mi transferencia SPEI y quiero enviar mi comprobante para validación.\n\n• Pedido: ${payload.order_id}\n• Importe: ${mxn(total)}\n• Referencia SPEI: ${payload.spei_reference}\n• Nombre: ${payload.name}\n• WhatsApp: ${payload.phone}\n\nAdjunto mi comprobante de transferencia. ¿Me confirman cuando el pago quede validado?`;
+}
+function showSpeiAfter(payload,res){
+  const box=document.querySelector('#speiAfter');
+  if(!box)return;
+  document.querySelector('#afterOrderId').textContent=res.order_id||payload.order_id||'—';
+  document.querySelector('#afterTotal').textContent=mxn(res.total ?? payload.serverTotal ?? payload.total);
+  document.querySelector('#afterReference').textContent=res.spei_reference||payload.spei_reference||'—';
+  document.querySelector('#afterConcept').textContent=res.spei_concept||('Luna de Cacao '+(res.order_id||payload.order_id||''));
+  box.classList.add('show');
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
 orderForm.onsubmit=async e=>{
   e.preventDefault();
   if(!orderForm.reportValidity())return;
@@ -565,9 +605,10 @@ orderForm.onsubmit=async e=>{
       APP_STATE.config.spei=res.spei;
       renderSpeiDetails();
       const confirm=document.querySelector('#speiConfirm');
-      if(confirm){confirm.style.display='block';confirm.innerHTML=`<b>Pedido ${res.order_id}</b><br>Total a transferir: <b>${mxn(res.total)}</b><br>Referencia: <b>${res.spei_reference}</b><br>Concepto sugerido: <b>${res.spei_concept||('Luna de Cacao '+res.order_id)}</b><br><br>Después de transferir, envía tu comprobante por WhatsApp para validarlo.`}
+      if(confirm){confirm.style.display='block';confirm.innerHTML=`<b>Pedido registrado correctamente.</b><br>Ahora realiza la transferencia con los datos mostrados abajo. No cierres esta ventana hasta copiar la referencia.`}
+      showSpeiAfter(payload,res);
       submitBtn.textContent='Pedido registrado';
-      setTimeout(()=>window.open(whatsUrl(fullMessage(payload)),'_blank'),500);
+      submitBtn.disabled=true;
       return;
     }
     closeDrawer();
@@ -575,8 +616,26 @@ orderForm.onsubmit=async e=>{
   }catch(err){
     console.error(err);
     toastMsg(err.message||'No se pudo registrar el pedido');
-  }finally{submitBtn.disabled=false;submitBtn.textContent=original}
+  }finally{if(submitBtn.textContent!=='Pedido registrado'){submitBtn.disabled=false;submitBtn.textContent=original}}
 };
+const copyAfterClabe=document.querySelector('#copyAfterClabe');
+const copyAfterReference=document.querySelector('#copyAfterReference');
+const reportSpeiBtn=document.querySelector('#reportSpeiTransfer');
+if(copyAfterClabe)copyAfterClabe.onclick=async()=>{const c=(APP_STATE.config&&APP_STATE.config.spei&&APP_STATE.config.spei.clabe)||'';if(!c)return;try{await navigator.clipboard.writeText(c);toastMsg('CLABE copiada')}catch(e){toastMsg('Copia la CLABE manualmente')}};
+if(copyAfterReference)copyAfterReference.onclick=async()=>{let p=null;try{p=JSON.parse(localStorage.getItem('lunaCacaoLastOrder')||'null')}catch(e){};const ref=p&&p.spei_reference||'';if(!ref)return;try{await navigator.clipboard.writeText(ref);toastMsg('Referencia copiada')}catch(e){toastMsg('Copia la referencia manualmente')}};
+if(reportSpeiBtn)reportSpeiBtn.onclick=async()=>{
+  let payload=null;try{payload=JSON.parse(localStorage.getItem('lunaCacaoLastOrder')||'null')}catch(e){}
+  if(!payload||!payload.order_id||payload.payment!=='SPEI'){toastMsg('No encontramos un pedido SPEI pendiente');return}
+  const old=reportSpeiBtn.textContent;reportSpeiBtn.disabled=true;reportSpeiBtn.textContent='Reportando…';
+  try{
+    const result=await reportSpeiTransfer(payload.order_id);
+    localStorage.setItem('lunaCacaoSpeiReported',JSON.stringify({order_id:payload.order_id,at:new Date().toISOString()}));
+    const notice=document.querySelector('#speiReported');if(notice)notice.classList.add('show');
+    reportSpeiBtn.textContent='Transferencia reportada';
+    window.open(whatsUrl(speiReceiptMessage(payload)),'_blank');
+  }catch(err){console.error(err);toastMsg(err.message||'No se pudo reportar');reportSpeiBtn.disabled=false;reportSpeiBtn.textContent=old}
+};
+
 sendWhats.onclick=()=>{if(!orderForm.reportValidity())return;const payload=orderPayload(orderForm);window.open(whatsUrl(fullMessage(payload)),'_blank')};
 
 async function loadBackendData(){
