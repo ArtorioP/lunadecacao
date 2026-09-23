@@ -121,7 +121,7 @@
     .fab{position:fixed;right:18px;bottom:18px;z-index:42;width:58px;height:58px;border-radius:50%;background:#26775b;color:white;border:0;box-shadow:0 14px 35px rgba(0,0,0,.25);font-size:24px;display:grid;place-items:center}
     .drawer-backdrop{position:fixed;inset:0;background:rgba(28,14,9,.58);z-index:79;opacity:0;pointer-events:none;transition:.25s}.drawer-backdrop.open{opacity:1;pointer-events:auto}.drawer{position:fixed;right:0;top:0;bottom:0;width:min(560px,100%);background:#fffaf4;z-index:80;transform:translateX(105%);transition:.28s ease;overflow:auto;box-shadow:-30px 0 60px rgba(0,0,0,.2)}.drawer.open{transform:none}.drawer-head{position:sticky;top:0;background:rgba(255,250,244,.96);backdrop-filter:blur(12px);padding:22px 24px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;z-index:2}.drawer-head h3{margin:0;font-size:28px;color:var(--choco)}.x{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:22px}.drawer-body{padding:24px}.checkout-summary{background:#f1e4d5;border-radius:18px;padding:18px;margin-bottom:22px}.checkout-summary b{color:var(--choco)}
     .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.field{display:grid;gap:6px}.field.full{grid-column:1/-1}.field label{font-size:12px;font-weight:800;color:var(--brown);text-transform:uppercase;letter-spacing:.06em}.field input,.field select,.field textarea{width:100%;padding:13px 14px;border:1px solid #ddcdbd;border-radius:13px;background:white;outline:0}.field textarea{min-height:82px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--caramel);box-shadow:0 0 0 3px rgba(197,107,74,.1)}
-    .pay-choice{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:7px}.pay-choice label{border:1px solid var(--line);border-radius:14px;padding:13px 8px;text-align:center;font-size:12px;font-weight:800;background:#fff;cursor:pointer}.pay-choice input{display:none}.pay-choice label:has(input:checked){border-color:var(--caramel);background:#fff1e7;color:#a84f35}.notice{background:#fff3d8;color:#785b21;border:1px solid #f0d594;padding:11px 13px;border-radius:12px;font-size:12px;margin-top:12px}.success{background:#e9f4eb;color:#3e6645;border-color:#b9d9bf}.checkout-actions{display:grid;gap:10px;margin-top:20px}.checkout-actions .btn{width:100%}
+    .pay-choice{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:7px}.pay-choice label{border:1px solid var(--line);border-radius:14px;padding:13px 8px;text-align:center;font-size:12px;font-weight:800;background:#fff;cursor:pointer}.pay-choice input{display:none}.pay-choice label:has(input:checked){border-color:var(--caramel);background:#fff1e7;color:#a84f35}.notice{background:#fff3d8;color:#785b21;border:1px solid #f0d594;padding:11px 13px;border-radius:12px;font-size:12px;margin-top:12px}.success{background:#e9f4eb;color:#3e6645;border-color:#b9d9bf}.checkout-actions{display:grid;gap:10px;margin-top:20px}.checkout-actions .btn{width:100%}.spei-details{display:none;margin-top:12px;padding:16px;border:1px solid #e5cda9;border-radius:16px;background:linear-gradient(180deg,#fffaf1,#f6ecdf);color:#533628}.spei-details.show{display:block}.spei-details h4{margin:0 0 10px;font:700 20px Georgia,serif;color:var(--choco)}.spei-grid{display:grid;grid-template-columns:1fr;gap:8px;font-size:13px}.spei-row{display:flex;justify-content:space-between;gap:14px;align-items:center;padding:9px 0;border-bottom:1px dashed #ddc8ae}.spei-row:last-child{border-bottom:0}.spei-row span{color:#846b5d}.spei-row b{color:var(--choco);text-align:right;word-break:break-all}.copy-spei{border:0;border-radius:999px;padding:9px 13px;background:var(--choco);color:#fff;font-weight:800;font-size:12px}.spei-help{margin:11px 0 0;font-size:12px;color:#745e50;line-height:1.45}.spei-confirm{margin-top:12px;padding:12px 14px;border-radius:14px;background:#edf6ef;color:#355d3d;border:1px solid #bdd8c2;font-size:12px;line-height:1.45}
     .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#1f120d;color:#fff;padding:12px 18px;border-radius:999px;z-index:99;transition:.25s;font-size:13px}.toast.show{opacity:1;transform:translate(-50%,0)}
     @media(max-width:900px){.navlinks a:not(.btn){display:none}.hero-grid,.product-card,.builder-grid,.coverage-grid{grid-template-columns:1fr}.hero-art{min-height:440px}.product-visual{min-height:390px}.future-grid{grid-template-columns:repeat(2,1fr)}.steps,.payments{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr 1fr}.prices,.option-grid{grid-template-columns:repeat(2,1fr)}.summary-card{position:relative;top:auto}}
     @media(max-width:580px){.wrap{width:min(100% - 22px,1160px)}nav{height:66px}.brand{font-size:20px}.logo-mark{width:39px;height:39px}.brand-logo img{height:50px}.navlinks .btn{padding:10px 13px;font-size:12px}.hero{padding-top:32px}.hero-grid{gap:25px}.hero-art{min-height:350px}.hero-card{width:100%;max-width:390px}.section-head{align-items:start;flex-direction:column}.product-info{padding:26px 20px}.product-info h3{font-size:34px}.product-visual{min-height:330px}.future-grid{grid-template-columns:1fr 1fr}.future{min-height:135px;padding:15px}.future h3{font-size:16px}.builder-panel,.summary-card{padding:20px}.coverage-card h2{font-size:35px}.footer-grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.field.full{grid-column:1}.pay-choice{grid-template-columns:1fr}.drawer-body{padding:18px}.splash-card{padding:28px 18px 30px}.splash-title{font-size:29px}.splash-text{font-size:14px}.splash-logo{max-width:92%}.steam-stage{height:140px}.steam-cup{width:132px;height:62px}.steam-cup::before{width:46px;height:32px;right:-43px;top:12px}.splash-actions{flex-direction:column}.splash-btn,.splash-link{width:100%}}
@@ -326,7 +326,7 @@
         </div>
         <div class="payments">
           <div class="pay"><b>Mercado Pago</b><span>Integración prevista con Checkout Pro. Se activará al conectar la cuenta de vendedor.</span></div>
-          <div class="pay"><b>SPEI</b><span>La interfaz ya contempla transferencia; faltan los datos bancarios de la marca.</span></div>
+          <div class="pay"><b>Transferencia SPEI</b><span>Paga por transferencia bancaria con CLABE. El pedido queda pendiente hasta confirmar el abono.</span></div>
           <div class="pay"><b>Pago a la entrega</b><span>Opción incluida en el flujo del prototipo, sujeta a las condiciones finales de entrega.</span></div>
         </div>
       </div>
@@ -347,7 +347,7 @@
         <div><h4>Explora</h4><a href="#sabores">Sabor disponible</a><br><a href="#coleccion">Próximos sabores</a><br><a href="#arma">Arma tu caja</a></div>
         <div><h4>Contacto</h4><a href="https://wa.me/524561275919" target="_blank" rel="noopener">WhatsApp 456 127 5919</a><br><p>Horarios y políticas por definir.</p></div>
       </div>
-      <div class="copyright"><span>© <span id="year"></span> Luna de Cacao.</span><span>Aplicación conectada · v0.9.3</span></div>
+      <div class="copyright"><span>© <span id="year"></span> Luna de Cacao.</span><span>Aplicación conectada · v0.9.4</span></div>
     </div>
   </footer>
 
@@ -373,6 +373,17 @@
               <label id="payCodLabel"><input type="radio" name="payment" value="Pago a la entrega" checked>A la entrega</label>
             </div>
             <div class="notice" id="paymentNotice">Pago a la entrega disponible. Mercado Pago y SPEI se activarán desde Google Sheets cuando estén configurados.</div>
+            <div class="spei-details" id="speiDetails">
+              <h4>Transferencia SPEI</h4>
+              <div class="spei-grid">
+                <div class="spei-row"><span>Institución</span><b id="speiBank">—</b></div>
+                <div class="spei-row"><span>Titular</span><b id="speiHolder">—</b></div>
+                <div class="spei-row"><span>CLABE</span><b id="speiClabe">—</b></div>
+                <div class="spei-row"><span></span><button class="copy-spei" id="copySpeiClabe" type="button">Copiar CLABE</button></div>
+              </div>
+              <p class="spei-help">Al registrar tu pedido te daremos una referencia única. Transfiere el total exacto y conserva tu comprobante. El pedido permanecerá pendiente hasta validar el abono.</p>
+              <div class="spei-confirm" id="speiConfirm" style="display:none"></div>
+            </div>
           </div>
         </div>
         <div class="checkout-actions"><button class="btn btn-primary" type="submit">Registrar pedido</button><button class="btn btn-whatsapp" type="button" id="sendWhats">Enviar por WhatsApp</button></div>
@@ -471,7 +482,29 @@ document.querySelectorAll('[data-open-cart]').forEach(x=>x.onclick=openDrawer);c
 document.querySelector('[data-open-whatsapp]').onclick=()=>window.open(whatsUrl(buildBaseMessage()),'_blank');
 document.querySelectorAll('.price-card').forEach(c=>c.onclick=()=>{selectedPackage=c.dataset.pkg;chosen=Array(PACKAGES[selectedPackage].count).fill(activeFlavors()[0].name);renderPackages();renderSlots();renderSummary();document.querySelector('#arma').scrollIntoView()});
 
-orderForm.addEventListener('change',e=>{if(e.target.name==='payment'){const v=e.target.value;paymentNotice.textContent=v==='Mercado Pago'?'Pago a la entrega disponible. Mercado Pago y SPEI se activarán desde Google Sheets cuando estén configurados.':v==='SPEI'?'Los datos bancarios SPEI están pendientes de configurar. El pedido puede registrarse mientras se completa esa información.':'La opción queda sujeta a confirmar las condiciones y zonas de entrega.'}});
+function renderSpeiDetails(){
+  const box=document.querySelector('#speiDetails');
+  const selected=orderForm.querySelector('input[name="payment"]:checked')?.value;
+  const spei=APP_STATE.config&&APP_STATE.config.spei;
+  if(!box)return;
+  const show=selected==='SPEI'&&APP_STATE.config&&APP_STATE.config.speiEnabled&&spei;
+  box.classList.toggle('show',!!show);
+  if(show){
+    document.querySelector('#speiBank').textContent=spei.bank||'Mercado Pago Wallet';
+    document.querySelector('#speiHolder').textContent=spei.holder||'';
+    document.querySelector('#speiClabe').textContent=spei.clabe||'';
+  }
+}
+function updatePaymentNotice(){
+  const selected=orderForm.querySelector('input[name="payment"]:checked')?.value;
+  if(selected==='SPEI') paymentNotice.textContent='Transferencia SPEI disponible. Registra el pedido para obtener tu referencia única de pago.';
+  else if(selected==='Mercado Pago') paymentNotice.textContent='Serás redirigido a Mercado Pago para completar el cobro.';
+  else paymentNotice.textContent='Paga al recibir tu pedido, sujeto a confirmación de zona y entrega.';
+  renderSpeiDetails();
+}
+orderForm.addEventListener('change',e=>{if(e.target.name==='payment')updatePaymentNotice()});
+const copySpeiBtn=document.querySelector('#copySpeiClabe');
+if(copySpeiBtn)copySpeiBtn.onclick=async()=>{const clabe=(APP_STATE.config&&APP_STATE.config.spei&&APP_STATE.config.spei.clabe)||'';if(!clabe)return;try{await navigator.clipboard.writeText(clabe);toastMsg('CLABE copiada')}catch(e){toastMsg('Copia la CLABE manualmente')}};
 function orderPayload(form){const data=Object.fromEntries(new FormData(form));const p=PACKAGES[selectedPackage];return {...data,action:'saveOrder',brand:CONFIG.siteName,presentationId:selectedPackage,presentation:p.label,items:chosen,total:p.price,createdAt:new Date().toISOString(),status:'Nuevo',source:location.href}}
 function fullMessage(payload){
   const total=payload.serverTotal ?? payload.total;
@@ -486,7 +519,8 @@ Quiero confirmar este pedido:${payload.order_id?`
 • Municipio: ${payload.municipality}${payload.deliveryDate?`
 • Fecha deseada: ${payload.deliveryDate}`:''}${payload.address?`
 • Dirección: ${payload.address}`:''}
-• Pago: ${payload.payment}${payload.notes?`
+• Pago: ${payload.payment}${payload.spei_reference?`
+• Referencia SPEI: ${payload.spei_reference}`:''}${payload.notes?`
 • Notas: ${payload.notes}`:''}
 
 ¿Me confirman disponibilidad y entrega?`;
@@ -517,7 +551,7 @@ orderForm.onsubmit=async e=>{
   const payload=orderPayload(e.currentTarget);
   try{
     const res=await saveOrder(payload);
-    payload.order_id=res.order_id;payload.serverTotal=res.total;APP_STATE.lastOrder=res;
+    payload.order_id=res.order_id;payload.serverTotal=res.total;payload.spei_reference=res.spei_reference||'';APP_STATE.lastOrder=res;
     localStorage.setItem('lunaCacaoLastOrder',JSON.stringify(payload));
     toastMsg(`Pedido ${res.order_id} registrado`);
     if(payload.payment==='Mercado Pago'){
@@ -526,6 +560,15 @@ orderForm.onsubmit=async e=>{
         localStorage.setItem('lunaCacaoPendingOrder',JSON.stringify({order_id:res.order_id,mercado_pago_order_id:pj.mercado_pago_order_id||''}));
         window.location.href=pj.checkout_url;return;
       }
+    }
+    if(payload.payment==='SPEI'&&res.spei){
+      APP_STATE.config.spei=res.spei;
+      renderSpeiDetails();
+      const confirm=document.querySelector('#speiConfirm');
+      if(confirm){confirm.style.display='block';confirm.innerHTML=`<b>Pedido ${res.order_id}</b><br>Total a transferir: <b>${mxn(res.total)}</b><br>Referencia: <b>${res.spei_reference}</b><br>Concepto sugerido: <b>${res.spei_concept||('Luna de Cacao '+res.order_id)}</b><br><br>Después de transferir, envía tu comprobante por WhatsApp para validarlo.`}
+      submitBtn.textContent='Pedido registrado';
+      setTimeout(()=>window.open(whatsUrl(fullMessage(payload)),'_blank'),500);
+      return;
     }
     closeDrawer();
     setTimeout(()=>window.open(whatsUrl(fullMessage(payload)),'_blank'),350);
